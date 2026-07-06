@@ -1,45 +1,54 @@
 package com.codealpha.grade;
 
 import java.util.ArrayList;
-import java.util.Scanner;
+import javax.swing.JOptionPane;
 
 public class StudentGradeTracker {
 
     public static void main(String[] args) {
 
-        Scanner sc = new Scanner(System.in);
         ArrayList<Student> students = new ArrayList<>();
 
         while (true) {
 
-            System.out.println("\n===== Student Grade Tracker =====");
-            System.out.println("1. Add Student");
-            System.out.println("2. View Report");
-            System.out.println("3. Exit");
-            System.out.print("Choose: ");
+            String choice = JOptionPane.showInputDialog(null,
+                    "===== Student Grade Tracker =====\n"
+                            + "1. Add Student\n"
+                            + "2. View Report\n"
+                            + "3. Exit\n"
+                            + "Choose an option:");
 
-            int choice = sc.nextInt();
-            sc.nextLine();
+            if (choice == null) {
+                break;
+            }
 
-            switch (choice) {
+            switch (choice.trim()) {
 
-            case 1:
+            case "1":
 
-                System.out.print("Student Name: ");
-                String name = sc.nextLine();
+                String name = JOptionPane.showInputDialog(null, "Student Name:");
 
-                System.out.print("Marks: ");
-                double marks = sc.nextDouble();
+                if (name == null || name.trim().isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "Name cannot be empty.");
+                    break;
+                }
 
-                students.add(new Student(name, marks));
+                String marksInput = JOptionPane.showInputDialog(null, "Marks:");
 
-                System.out.println("Student Added Successfully!");
+                try {
+                    double marks = Double.parseDouble(marksInput);
+                    students.add(new Student(name, marks));
+                    JOptionPane.showMessageDialog(null, "Student Added Successfully!");
+                } catch (NumberFormatException e) {
+                    JOptionPane.showMessageDialog(null, "Marks must be a number.");
+                }
+
                 break;
 
-            case 2:
+            case "2":
 
                 if (students.isEmpty()) {
-                    System.out.println("No Data Available");
+                    JOptionPane.showMessageDialog(null, "No Data Available");
                     break;
                 }
 
@@ -47,11 +56,11 @@ public class StudentGradeTracker {
                 Student highest = students.get(0);
                 Student lowest = students.get(0);
 
-                System.out.println("\n--- Student Report ---");
+                StringBuilder report = new StringBuilder("--- Student Report ---\n");
 
                 for (Student s : students) {
 
-                    System.out.println(s.getName() + " : " + s.getMarks());
+                    report.append(s.getName()).append(" : ").append(s.getMarks()).append("\n");
 
                     total += s.getMarks();
 
@@ -64,21 +73,22 @@ public class StudentGradeTracker {
 
                 double average = total / students.size();
 
-                System.out.println("\nAverage Marks: " + average);
-                System.out.println("Highest: " + highest.getName() + " (" + highest.getMarks() + ")");
-                System.out.println("Lowest: " + lowest.getName() + " (" + lowest.getMarks() + ")");
+                report.append("\nAverage Marks: ").append(average).append("\n");
+                report.append("Highest: ").append(highest.getName()).append(" (").append(highest.getMarks()).append(")\n");
+                report.append("Lowest: ").append(lowest.getName()).append(" (").append(lowest.getMarks()).append(")");
+
+                JOptionPane.showMessageDialog(null, report.toString());
 
                 break;
 
-            case 3:
+            case "3":
 
-                System.out.println("Program Closed");
-                sc.close();
+                JOptionPane.showMessageDialog(null, "Program Closed");
                 System.exit(0);
 
             default:
 
-                System.out.println("Invalid Choice");
+                JOptionPane.showMessageDialog(null, "Invalid Choice");
             }
         }
     }
